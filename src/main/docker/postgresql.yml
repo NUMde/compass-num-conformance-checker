@@ -1,0 +1,10 @@
+# This configuration is intended for development purpose ony
+version: '3.8'
+services:
+  gateway-postgresql:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=
+      - POSTGRES_PASSWORD=
+    ports:
+      - "5432:5432"

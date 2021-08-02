@@ -1,0 +1,35 @@
+{
+  "resourceType": "OperationDefinition",
+  "id": "validate-single",
+  "url": "https://num-compass.science/fhir/OperationDefinition/validate-single",
+  "status": "draft",
+  "kind": "operation",
+  "name": "ValidateSingleResource",
+  "title": "Validate single instance of arbitrary type",
+  "code": "validate-single",
+  "purpose": "Provides a single operation for validating a resource of arbitrary type. Differs from the standard $validate operation in that it works (only) on the system level and requires the resource to be sent in the request. If validation against a specific profile is required, the corresponding canonical URI of the profile should be put in the `meta.profile` element of the submitted resource.",
+  "system": true,
+  "type": false,
+  "instance": false,
+  "resource": [
+    "Resource"
+  ],
+  "parameter": [
+    {
+      "name": "resource",
+      "use": "in",
+      "min": 1,
+      "max": "1",
+      "documentation": "Resource to be validated",
+      "type": "Resource"
+    },
+    {
+      "name": "return",
+      "use": "out",
+      "min": 1,
+      "max": "1",
+      "documentation": "List of any validation issues",
+      "type": "OperationOutcome"
+    }
+  ]
+}

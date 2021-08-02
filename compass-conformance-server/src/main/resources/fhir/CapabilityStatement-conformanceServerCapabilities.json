@@ -1,0 +1,40 @@
+{
+  "resourceType": "CapabilityStatement",
+  "url": "https://num-compass.science/fhir/CapabilityStatement/num-compass-conformance-test",
+  "version": "0.1.0",
+  "name": "Measure Processor Service Conformance Statement",
+  "status": "draft",
+  "date": "2021-07-06",
+  "description": "Conformance statement for the NUM COMPASS conformance testing server",
+  "kind": "capability",
+  "software": {
+    "name": "NUM-COMPASS conformance testing server"
+  },
+  "fhirVersion": "4.0.1",
+  "format": [
+    "json",
+    "xml"
+  ],
+  "rest": [
+    {
+      "mode": "server",
+      "operation": [
+        {
+          "name": "validate-single",
+          "definition": "https://num-compass.science/fhir/OperationDefinition/validate-single",
+          "documentation": "Validate a single resource. Can also be used asynchronously mode by setting the header `Prefer`-header to `respond-async`. The response will be a UUID - the response can then be fetched at `$validate-single/[UUID]`."
+        },
+        {
+          "name": "check-gecco-conformance",
+          "definition": "https://num-compass.science/fhir/OperationDefinition/check-gecco-conformance",
+          "documentation": "Perform full GECCO conformance check on data set. Can also be used asynchronously mode by setting the header `Prefer`-header to `respond-async`. The response will be a UUID - the response can then be fetched at `$validate-single/[UUID]`."
+        },
+        {
+          "name": "list-conformance-resources",
+          "definition": "https://num-compass.science/fhir/OperationDefinition/list-conformance-resources",
+          "documentation": "List the canonical URLs of all FHIR artifacts available for validation (StructureDefinition, CodeSystem, and ValueSystem resources)."
+        }
+      ]
+    }
+  ]
+}

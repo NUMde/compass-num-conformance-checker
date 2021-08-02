@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>FHIR resource validator</title>
+
+    <script src="jquery.min.js"></script>
+    <script src="bootstrap.min.js"></script>
+    <script src="app.js"></script>
+    <link href="bootstrap.min.css" rel="stylesheet"/>
+    <link href="style.css" rel="stylesheet"/>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="mb-3">
+            <img id="logo" src="logo.svg" alt="NUM COMPASS logo">
+        </div>
+    </div>
+    <form id="resource-form" method="post" action="/fhir/$validate-single">
+        <h5>Paste your FHIR resource here:</h5>
+        <div class="row">
+            <div class="mb-3">
+                <div class="input-group">
+                    <textarea class="form-control" aria-label="Resource" style="height: 400px;"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div id="button-cell" class="mb-3">
+                <button type="submit" class="btn btn-primary">
+                    <span class="hidden-spinner spinner-border spinner-border-sm text-light"></span>
+                    Validate
+                </button>
+            </div>
+        </div>
+    </form>
+    <div id="messages" class="row"></div>
+</div>
+</body>
+</html>

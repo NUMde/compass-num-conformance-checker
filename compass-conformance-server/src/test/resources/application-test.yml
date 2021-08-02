@@ -1,0 +1,8 @@
+logging:
+  config: "classpath:logback-test.xml"
+spring:
+  jpa:
+    properties:
+      hibernate.search.backend.directory.root: build/tmp/lucenefiles
+  main:
+    allow-bean-definition-overriding: true

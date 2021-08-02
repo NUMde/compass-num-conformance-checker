@@ -1,0 +1,14 @@
+logging:
+  config: "classpath:logback-test.xml"
+hapi:
+  fhir:
+    implementation-guides:
+      basisprofil:
+        name: de.basisprofil.r4
+        version: 0.9.13
+spring:
+  jpa:
+    properties:
+      hibernate.search.backend.directory.root: build/tmp/lucenefiles
+  main:
+    allow-bean-definition-overriding: true

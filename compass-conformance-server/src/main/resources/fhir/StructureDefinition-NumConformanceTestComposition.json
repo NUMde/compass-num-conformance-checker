@@ -1,0 +1,218 @@
+{
+  "resourceType": "StructureDefinition",
+  "id": "NumConformanceTestComposition",
+  "extension": [
+    {
+      "url": "http://hl7.org/fhir/StructureDefinition/structuredefinition-category",
+      "valueString": "Foundation.Documents"
+    },
+    {
+      "url": "http://hl7.org/fhir/StructureDefinition/structuredefinition-security-category",
+      "valueCode": "not-classified"
+    }
+  ],
+  "url": "https://num-compass.science/fhir/StructureDefinition/NumConformanceTestComposition",
+  "version": "0.1.0",
+  "name": "NumConformanceTestComposition",
+  "status": "draft",
+  "fhirVersion": "4.0.1",
+  "mapping": [
+    {
+      "identity": "workflow",
+      "uri": "http://hl7.org/fhir/workflow",
+      "name": "Workflow Pattern"
+    },
+    {
+      "identity": "rim",
+      "uri": "http://hl7.org/v3",
+      "name": "RIM Mapping"
+    },
+    {
+      "identity": "cda",
+      "uri": "http://hl7.org/v3/cda",
+      "name": "CDA (R2)"
+    },
+    {
+      "identity": "fhirdocumentreference",
+      "uri": "http://hl7.org/fhir/documentreference",
+      "name": "FHIR DocumentReference"
+    },
+    {
+      "identity": "w5",
+      "uri": "http://hl7.org/fhir/fivews",
+      "name": "FiveWs Pattern Mapping"
+    }
+  ],
+  "kind": "resource",
+  "abstract": false,
+  "type": "Composition",
+  "baseDefinition": "http://hl7.org/fhir/StructureDefinition/Composition",
+  "derivation": "constraint",
+  "differential": {
+    "element": [
+      {
+        "id": "Composition.status",
+        "path": "Composition.status",
+        "fixedCode": "final"
+      },
+      {
+        "id": "Composition.type",
+        "path": "Composition.type",
+        "patternCodeableConcept": {
+          "coding": [
+            {
+              "code": "68608-9",
+              "system": "http://loinc.org"
+            }
+          ]
+        }
+      },
+      {
+        "id": "Composition.section",
+        "path": "Composition.section",
+        "slicing": {
+          "discriminator": [
+            {
+              "type": "pattern",
+              "path": "code"
+            }
+          ],
+          "ordered": false,
+          "rules": "closed"
+        },
+        "short": "Sections of the conformance test bundle",
+        "min": 3
+      },
+      {
+        "id": "Composition.section:software",
+        "path": "Composition.section",
+        "sliceName": "software",
+        "short": "Software that generated the test data",
+        "min": 1,
+        "max": "1"
+      },
+      {
+        "id": "Composition.section:software.code",
+        "path": "Composition.section.code",
+        "min": 1,
+        "patternCodeableConcept": {
+          "coding": [
+            {
+              "code": "92040-5",
+              "system": "http://loinc.org"
+            }
+          ]
+        }
+      },
+      {
+        "id": "Composition.section:software.entry",
+        "path": "Composition.section.entry",
+        "min": 1,
+        "max": "1",
+        "type": [
+          {
+            "code": "Reference",
+            "targetProfile": [
+              "https://num-compass.science/fhir/StructureDefinition/NumConformanceDevice"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Composition.section:publishingOrg",
+        "path": "Composition.section",
+        "sliceName": "publishingOrg",
+        "short": "Organization publishing the software",
+        "min": 1,
+        "max": "1"
+      },
+      {
+        "id": "Composition.section:publishingOrg.code",
+        "path": "Composition.section.code",
+        "min": 1,
+        "patternCodeableConcept": {
+          "coding": [
+            {
+              "code": "91025-7",
+              "system": "http://loinc.org"
+            }
+          ]
+        }
+      },
+      {
+        "id": "Composition.section:publishingOrg.entry",
+        "path": "Composition.section.entry",
+        "min": 1,
+        "max": "1",
+        "type": [
+          {
+            "code": "Reference",
+            "targetProfile": [
+              "https://num-compass.science/fhir/StructureDefinition/NumConformanceOrganization"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Composition.section:questionnaire",
+        "path": "Composition.section",
+        "sliceName": "questionnaire",
+        "short": "Questionnaires used in the software",
+        "min": 0,
+        "max": "*"
+      },
+      {
+        "id": "Composition.section:questionnaire.code",
+        "path": "Composition.section.code",
+        "min": 1,
+        "patternCodeableConcept": {
+          "coding": [
+            {
+              "code": "74468-0",
+              "system": "http://loinc.org"
+            }
+          ]
+        }
+      },
+      {
+        "id": "Composition.section:questionnaire.entry",
+        "path": "Composition.section.entry",
+        "min": 1,
+        "type": [
+          {
+            "code": "Reference",
+            "targetProfile": [
+              "http://hl7.org/fhir/StructureDefinition/Questionnaire"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Composition.section:testData",
+        "path": "Composition.section",
+        "sliceName": "testData",
+        "short": "Test data resources",
+        "min": 1,
+        "max": "*"
+      },
+      {
+        "id": "Composition.section:testData.code",
+        "path": "Composition.section.code",
+        "min": 1,
+        "patternCodeableConcept": {
+          "coding": [
+            {
+              "code": "68839-0",
+              "system": "http://loinc.org"
+            }
+          ]
+        }
+      },
+      {
+        "id": "Composition.section:testData.entry",
+        "path": "Composition.section.entry",
+        "min": 1
+      }
+    ]
+  }
+}

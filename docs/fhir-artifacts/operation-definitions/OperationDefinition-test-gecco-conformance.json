@@ -1,0 +1,44 @@
+{
+  "resourceType": "OperationDefinition",
+  "id": "check-gecco-conformance",
+  "url": "https://num-compass.science/fhir/OperationDefinition/check-gecco-conformance",
+  "status": "draft",
+  "kind": "operation",
+  "name": "TestGeccoConformance",
+  "title": "Test GECCO conformance of an app based on test data",
+  "code": "check-gecco-conformance",
+  "purpose": "Test GECCO conformance based on a test data set and information about the producing app",
+  "system": true,
+  "type": false,
+  "instance": false,
+  "resource": [
+    "Bundle"
+  ],
+  "inputProfile": "https://num-compass.science/fhir/StructureDefinition/NumConformanceTestBundle",
+  "parameter": [
+    {
+      "name": "resource",
+      "use": "in",
+      "min": 1,
+      "max": "1",
+      "documentation": "Bundle resource holding a FHIR document with all information needed for the conformance test",
+      "type": "Bundle"
+    },
+    {
+      "name": "opsOutReturn",
+      "use": "out",
+      "min": 0,
+      "max": "1",
+      "documentation": "List of any validation issues - returned if one or more tests fail",
+      "type": "OperationOutcome"
+    },
+    {
+      "name": "pdfReturn",
+      "use": "out",
+      "min": 0,
+      "max": "1",
+      "documentation": "PDF document documenting successful test - returned if all tests pass",
+      "type": "Binary"
+    }
+  ]
+}

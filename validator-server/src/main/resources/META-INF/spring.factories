@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.springframework.boot.autoconfigure.orm.jpa.JpaConfiguration,\
+science.numcompass.conformance.fhir.configuration.R4Configuration

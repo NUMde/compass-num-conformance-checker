@@ -1,0 +1,9 @@
+# This configuration is intended for development purpose only
+version: '3.8'
+services:
+  gateway-sonar:
+    image: sonarqube:latest
+    environment:
+      - sonar.forceAuthentication=false
+    ports:
+      - 127.0.0.1:9001:9000

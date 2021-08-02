@@ -1,0 +1,59 @@
+:root {
+    --main-color: #1c2732;
+    --button-hover: #eb576a;
+}
+
+html, body {
+    background-color: #f2f0f1;
+    color: var(--main-color);
+    font-family: -apple-system, Ubuntu, Roboto, 'Segoe UI', 'Noto Sans', Cantarell, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+}
+
+pre {
+    margin-bottom: 0;
+}
+
+#logo {
+    height: 48px;
+    margin: 24px 0 8px 0;
+    padding: 0;
+}
+
+#resource-form {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.08);
+    padding: 24px 33px;
+}
+
+#resource-form textarea {
+    border-color: var(--main-color);
+    border-radius: 4px;
+    box-shadow: none;
+    outline: none;
+}
+
+#button-cell {
+    margin-bottom: 0 !important;
+}
+
+#resource-form button {
+    background-color: var(--main-color);
+    border-color: var(--main-color);
+    border-radius: 24px;
+    width: 256px;
+}
+
+.hidden-spinner {
+    display: none;
+    visibility: hidden;
+}
+
+#resource-form button:hover {
+    background-color: var(--button-hover);
+    border-color: var(--button-hover);
+}
+
+#messages {
+    padding: 24px 12px;
+}
