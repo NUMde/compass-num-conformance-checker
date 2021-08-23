@@ -1,3 +1,12 @@
+hapi:
+  fhir:
+    # The defer_indexing_for_codesystems_of_size is set to 0 to avoid all value set expansions.
+    # This works in conjunction with an no-op override of the preExpandDeferredValueSetsToTerminologyTables
+    # in TermReadSvcR4 class. This is done in order to avoid spurious validation errors from checks against
+    # value sets that are flagged as expanded but in fact contain no codes. For background, see this thread
+    # on the FHIR Zulip chat:
+    # https://chat.fhir.org/#narrow/stream/179167-hapi/topic/Issue.20with.20JPA.20terminology.20validation.20for.20SNOMED
+    defer_indexing_for_codesystems_of_size: 0
 spring:
   batch:
     job:
