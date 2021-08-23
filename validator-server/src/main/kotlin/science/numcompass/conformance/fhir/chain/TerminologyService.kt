@@ -1,5 +1,6 @@
 package science.numcompass.conformance.fhir.chain
 
+import ca.uhn.fhir.context.support.ConceptValidationOptions
 import ca.uhn.fhir.context.support.IValidationSupport
 import ca.uhn.fhir.context.support.ValidationSupportContext
 import ca.uhn.fhir.context.support.ValueSetExpansionOptions
@@ -39,4 +40,44 @@ open class TerminologyService(daoConfig: DaoConfig) : IValidator, TermReadSvcR4(
     ) {
         super.expandValueSet(options ?: defaultExpansionOptions, valueSet, accumulator)
     }
+
+    /**
+     * This override catches post-coordinates (composite) SNOMED codes that cannot be validated and
+     * returns a warning for them (to avoiding spurious errors being returned from code validation).
+     */
+    override fun validateCode(
+        theValidationSupportContext: ValidationSupportContext?,
+        theOptions: ConceptValidationOptions?,
+        theCodeSystem: String?,
+        theCode: String?,
+        theDisplay: String?,
+        theValueSetUrl: String?
+    ): IValidationSupport.CodeValidationResult? {
+
+        if (isPostCoordinateSnomed(theCodeSystem, theCode))
+            return IValidationSupport.CodeValidationResult()
+                .setSeverity(IValidationSupport.IssueSeverity.WARNING)
+                .setCodeSystemName(theCodeSystem)
+                .setCode(theCode)
+                .setMessage("Post-coordinated (composite) SNOMED codes are not supported - did not validate $theCode")
+
+        return super<TermReadSvcR4>.validateCode(
+            theValidationSupportContext,
+            theOptions,
+            theCodeSystem,
+            theCode,
+            theDisplay,
+            theValueSetUrl
+        )
+    }
+
+    /**
+     * Check if a system-code pair represents a post-coordinated (composite) SNOMED code.
+     */
+    private fun isPostCoordinateSnomed(theCodeSystem: String?, theCode: String?): Boolean {
+        if (theCode == null || theCodeSystem?.startsWith("http://snomed.info/sct") != true) return false
+        val isSimpleSnomedCodeRegExp = Regex("\\d+")
+        return !isSimpleSnomedCodeRegExp.matches(theCode)
+    }
+
 }
