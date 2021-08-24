@@ -12,6 +12,19 @@ import org.hl7.fhir.r4.model.ValueSet
 import science.numcompass.conformance.fhir.chain.ValidationChain.IValidator
 
 /**
+ * Try to check if a system-code pair represents a post-coordinated (composite) SNOMED code.
+ *
+ * The current check is very simple and may potentially flag too many codes.
+ */
+internal fun isPostCoordinateSnomed(theCodeSystem: String?, theCode: String?): Boolean {
+    // Check if this is declared as a SNOMED code
+    if (theCode == null || theCodeSystem?.startsWith("http://snomed.info/sct") != true) return false
+    // Check if the code is a single alphanumeric string
+    val isSimpleCodeRegExp = Regex("\\w+")
+    return !isSimpleCodeRegExp.matches(theCode)
+}
+
+/**
  * This server extends [TermReadSvcR4] to prevent missing code system errors.
  */
 open class TerminologyService(daoConfig: DaoConfig) : IValidator, TermReadSvcR4() {
@@ -69,15 +82,6 @@ open class TerminologyService(daoConfig: DaoConfig) : IValidator, TermReadSvcR4(
             theDisplay,
             theValueSetUrl
         )
-    }
-
-    /**
-     * Check if a system-code pair represents a post-coordinated (composite) SNOMED code.
-     */
-    private fun isPostCoordinateSnomed(theCodeSystem: String?, theCode: String?): Boolean {
-        if (theCode == null || theCodeSystem?.startsWith("http://snomed.info/sct") != true) return false
-        val isSimpleSnomedCodeRegExp = Regex("\\d+")
-        return !isSimpleSnomedCodeRegExp.matches(theCode)
     }
 
 }
