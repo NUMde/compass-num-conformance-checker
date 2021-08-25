@@ -10,66 +10,72 @@ internal class TerminologyServiceKtTest {
     private val snomedSystemUrl = "http://snomed.info/sct"
 
     @Test
-    fun `An arbitrary code not declared as SNOMED is not skipped`() {
-        val testString = "12344:4356=4545"
-        val valResult = isPostCoordinateSnomed("http://loinc.org", testString)
+    fun `An arbitrary code not declared as SNOMED should be validated`() {
+        val validSnomedExpression = "83152002:405815000=122456005"
+        val valResult = isSnomedCodeThatShouldNotBeValidated("http://loinc.org", validSnomedExpression)
         assertThat(valResult).isFalse()
     }
 
     @Test
-    fun `A normal, single SNOMED code (integer) declared as SNOMED is not skipped`() {
-        val testString = "410594000"
-        val valResult = isPostCoordinateSnomed(snomedSystemUrl, testString)
+    fun `A valid single SNOMED code declared as SNOMED should be validated`() {
+        val validSnomedCode = "410594000"
+        val valResult = isSnomedCodeThatShouldNotBeValidated(snomedSystemUrl, validSnomedCode)
         assertThat(valResult).isFalse()
     }
 
     @Test
-    fun `An alphanumeric code declared as SNOMED is not skipped`() {
-        val testString = "ad67886asjd"
-        val valResult = isPostCoordinateSnomed(snomedSystemUrl, testString)
+    fun `An integer that is not a valid SNOMED code but is declared as SNOMED should be validated`() {
+        val invalidSnomedCode = "999999999"
+        val valResult = isSnomedCodeThatShouldNotBeValidated(snomedSystemUrl, invalidSnomedCode)
         assertThat(valResult).isFalse()
     }
 
+    @Test
+    fun `An alphanumeric code declared as SNOMED should be validated`() {
+        val alphanumericCode = "ad67886asjd"
+        val valResult = isSnomedCodeThatShouldNotBeValidated(snomedSystemUrl, alphanumericCode)
+        assertThat(valResult).isFalse()
+    }
 
     @Test
-    fun `An alphanumeric code with spaces declared as SNOMED is skipped`() {
-        val testString = "ad678 86asjd"
-        val valResult = isPostCoordinateSnomed(snomedSystemUrl, testString)
+    fun `An alphanumeric code with spaces declared as SNOMED should be validated`() {
+        val alphanumericCodeWithSpace = "ad678 86asjd"
+        val valResult = isSnomedCodeThatShouldNotBeValidated(snomedSystemUrl, alphanumericCodeWithSpace)
+        assertThat(valResult).isFalse()
+    }
+
+    @Test
+    fun `A valid single SNOMED code with label and leading whitespace declared as SNOMED should be validated (will correctly fail validation)`() {
+        val validSnomedCodeWithDisplayAndLeadingSpace = " 410594000|Definitely not present"
+        val valResult = isSnomedCodeThatShouldNotBeValidated(snomedSystemUrl, validSnomedCodeWithDisplayAndLeadingSpace)
+        assertThat(valResult).isFalse()
+    }
+
+    @Test
+    fun `A  valid single SNOMED code with display label declared as SNOMED should not be validated`() {
+        val validSnomedCodeWithDisplay = "410594000|Definitely not present"
+        val valResult = isSnomedCodeThatShouldNotBeValidated(snomedSystemUrl, validSnomedCodeWithDisplay)
         assertThat(valResult).isTrue()
     }
 
     @Test
-    fun `A normal, single SNOMED code (integer) with label declared as SNOMED is skipped`() {
-        val testString = "410594000|Definitely not present"
-        val valResult = isPostCoordinateSnomed(snomedSystemUrl, testString)
+    fun `A SNOMED multiple focus expression should not be validated`() {
+        val validMultiFocusSnomedExpression = "421720008+7946007"
+        val valResult = isSnomedCodeThatShouldNotBeValidated(snomedSystemUrl, validMultiFocusSnomedExpression)
         assertThat(valResult).isTrue()
     }
 
     @Test
-    fun `A normal, single SNOMED code (integer) with label and surrounding whitespaces declared as SNOMED is skipped`() {
-        val testString = " 410594000 | Definitely not present "
-        val valResult = isPostCoordinateSnomed(snomedSystemUrl, testString)
+    fun `A SNOMED expression with refinements should not be validated`() {
+        val validSnomedRefinementExpression = "83152002:405815000=122456005"
+        val valResult = isSnomedCodeThatShouldNotBeValidated(snomedSystemUrl, validSnomedRefinementExpression)
         assertThat(valResult).isTrue()
     }
 
     @Test
-    fun `A SNOMED multiple focus expression is skipped`() {
-        val testString = "421720008+7946007"
-        val valResult = isPostCoordinateSnomed(snomedSystemUrl, testString)
-        assertThat(valResult).isTrue()
-    }
-
-    @Test
-    fun `A SNOMED expression with refinements is skipped`() {
-        val testString = "83152002:405815000=122456005"
-        val valResult = isPostCoordinateSnomed(snomedSystemUrl, testString)
-        assertThat(valResult).isTrue()
-    }
-
-    @Test
-    fun `A SNOMED expression with attribute groups is skipped`() {
-        val testString = "71388002:{260686004=129304002,405813007=15497006}"
-        val valResult = isPostCoordinateSnomed(snomedSystemUrl, testString)
+    fun `A SNOMED expression with attribute groups should not be validated`() {
+        val validSnomedExporessionWithGroups = "71388002:{260686004=129304002,405813007=15497006}"
+        val valResult = isSnomedCodeThatShouldNotBeValidated(snomedSystemUrl, validSnomedExporessionWithGroups)
         assertThat(valResult).isTrue()
     }
 

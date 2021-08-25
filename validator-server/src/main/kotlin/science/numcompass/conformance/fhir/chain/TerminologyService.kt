@@ -12,16 +12,24 @@ import org.hl7.fhir.r4.model.ValueSet
 import science.numcompass.conformance.fhir.chain.ValidationChain.IValidator
 
 /**
- * Try to check if a system-code pair represents a post-coordinated (composite) SNOMED code.
+ * Try to check if a system-code pair represents a SNOMED expression that the TerminologyService
+ * will incorrectly classify as invalid. This is used for skipping validation of such terms to
+ * avoid spurious errors.
  *
- * The current check is very simple and may potentially flag too many codes.
+ * Note that this function is not meant to evaluate whether a given code string is actually
+ * a *valid* SNOMED code 9or valid FHIR code in general). It will only check whether it appears
+ * to be a valid SNOMED expression code that would incorrectly fail validation. Hence, the check
+ * will actually let through e.g. valid SNOMED expressions with leading spaces. The reason is that
+ * such codes can *correctly* be flagged as invalid by the validator because FHIR codes can never
+ * have a leading space.
  */
-internal fun isPostCoordinateSnomed(theCodeSystem: String?, theCode: String?): Boolean {
+internal fun isSnomedCodeThatShouldNotBeValidated(theCodeSystem: String?, theCode: String?): Boolean {
     // Check if this is declared as a SNOMED code
     if (theCode == null || theCodeSystem?.startsWith("http://snomed.info/sct") != true) return false
-    // Check if the code is a single alphanumeric string
-    val isSimpleCodeRegExp = Regex("\\w+")
-    return !isSimpleCodeRegExp.matches(theCode)
+    /* We classify any integer followed by ":", "|", or "+" (possibly with spaces)
+    as a SNOMED expression */
+    val isASnomedExpression = Regex("^\\d+\\s*[\\:\\|\\+]")
+    return isASnomedExpression.containsMatchIn(theCode)
 }
 
 /**
@@ -67,12 +75,12 @@ open class TerminologyService(daoConfig: DaoConfig) : IValidator, TermReadSvcR4(
         theValueSetUrl: String?
     ): IValidationSupport.CodeValidationResult? {
 
-        if (isPostCoordinateSnomed(theCodeSystem, theCode))
+        if (isSnomedCodeThatShouldNotBeValidated(theCodeSystem, theCode))
             return IValidationSupport.CodeValidationResult()
                 .setSeverity(IValidationSupport.IssueSeverity.WARNING)
                 .setCodeSystemName(theCodeSystem)
                 .setCode(theCode)
-                .setMessage("Post-coordinated (composite) SNOMED codes are not supported - did not validate $theCode")
+                .setMessage("Validation of SNOMED expressions are not supported - did not validate $theCode")
 
         return super<TermReadSvcR4>.validateCode(
             theValidationSupportContext,
