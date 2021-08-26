@@ -11,6 +11,8 @@ import org.hl7.fhir.instance.model.api.IBaseResource
 import org.hl7.fhir.r4.model.ValueSet
 import science.numcompass.conformance.fhir.chain.ValidationChain.IValidator
 
+private val isASnomedExpression = Regex("^\\d+\\s*[\\:\\|\\+]")
+
 /**
  * Try to check if a system-code pair represents a SNOMED expression that the TerminologyService
  * will incorrectly classify as invalid. This is used for skipping validation of such terms to
@@ -28,7 +30,6 @@ internal fun isSnomedCodeThatShouldNotBeValidated(theCodeSystem: String?, theCod
     if (theCode == null || theCodeSystem?.startsWith("http://snomed.info/sct") != true) return false
     /* We classify any integer followed by ":", "|", or "+" (possibly with spaces)
     as a SNOMED expression */
-    val isASnomedExpression = Regex("^\\d+\\s*[\\:\\|\\+]")
     return isASnomedExpression.containsMatchIn(theCode)
 }
 
