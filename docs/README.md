@@ -32,9 +32,7 @@ root directory:
 ./gradlew clean compass-conformance-server:bootRun -Dspring.profile.active=h2
 ```
 
-This will start the application under the base URL `http://localhost:8080/fhir`. Note that start up will take a few minutes as various FHIR artifacts must be installed and loaded into the database. If the server also loads one or more large terminologies like SNOMED CT or LOINC (see below for details), the start-up and load process will take significantly longer, and running the server with H2 will require several GB of free memory.
-
-### Running tests
+This will start the application under the base URL `http://localhost:8080/fhir`.
 
 The tests can be run using the following command (in the root directory)
 
@@ -75,7 +73,7 @@ This endpoint provides a PDF file listing all natively integrated code systems o
 systems from the default profile starting with `http://hl7.org/fhir/` and `http://terminology.hl7.org/CodeSystem/` are
 excluded.
 
-**NOTE:** code systems supported by remote terminology servers are not included.
+**NOTE:** Code systems supported by remote terminology servers are not included.
 
 ## Single resource validation
 
@@ -89,13 +87,14 @@ POST [base URL]/$validate-single
 
 ### Input format
 
-The resource to be validated must be included in the message body. To validate a resource against a specific profile (
-known to the server, i.e. typically a GECCO profile), declare it in the `meta.profile` element of the resource itself.
+The resource to be validated must be included in the message body. To validate a resource against a specific profile (known to the server, i.e. typically a GECCO profile), declare it in the `meta.profile` element of the resource itself.
 
 ### Output format
 
-The operation returns a [OperationOutcome FHIR resource](https://www.hl7.org/fhir/r4/operationoutcome.html) giving the
-result of the validation process, including any errors found. Note that one cannot tell from the HTTP response status
+The operation returns a [OperationOutcome FHIR resource](https://www.hl7.org/fhir/r4/operationoutcome.html) giving
+result of the validation process, including any errors found. 
+
+**NOTE:** You cannot tell from the HTTP response status
 whether validations errors where found or not - the status will be 200 unless an unexpected error occurred.
 
 ## Perform full validation test
@@ -134,7 +133,7 @@ The output returned by the endpoint depends on whether the test was passed or no
 * _Conformance test failed:_ FHIR [OperationOutcome resource](https://www.hl7.org/fhir/r4/operationoutcome.html) with
   the result of the validation process, including the errors found.
 
-Note that one cannot tell from the HTTP response status whether validations errors where found or not: the status will
+**NOTE:** You cannot tell from the HTTP response status whether validations errors were found or not: the status will
 be 200 unless an unexpected error occurred.
 
 ## List all loaded conformance resources
@@ -238,9 +237,9 @@ The output returned by the endpoint depends on whether the test was passed or no
 
 With the default configuration, the conformance checker will only validate codes from a few standard code systems, as well as code systems completely defined in the FHIR specification or loaded implementation guides (i.e. by default GECCO and its dependencies). Codes from other systems are not checked.
 
-To allow validation against more code systems, one can either load further terminologies into the database from local files on start-up, or connect an external terminology server (see below for how to configure these options). Loading terminologies directly into the conformance checker allows extending the set of terminologies used for validation without running further services. An external terminology server requires separate deployment and maintenance, but will, on the other hand, typically provide more flexible and powerful validation. These methods can also be combined.
+To allow validation against more code systems, you can either load further terminologies into the database from local files on start-up, or connect an external terminology server (see below for how to configure these options). Loading terminologies directly into the conformance checker allows extending the set of terminologies used for validation without running further services. An external terminology server requires separate deployment and maintenance, but typically provides more flexible and powerful validation. These methods can also be combined.
 
-When adding validation against further terminologies, by whatever method, be sure to respect the individual code system's license terms.
+When adding validation against further terminologies, by any method, be sure to respect the individual code system's license terms.
 
 ## Limitations to terminology validation using the local database
 
@@ -305,7 +304,7 @@ Both JSON and XML are supported.
 
 # Individual server modules and their configuration
 
-The conformance test server is build using the Spring/Spring Boot framework and is divided into several modules with
+The conformance test server is built using the Spring/Spring Boot framework and is divided into several modules with
 distinct functionality. The listed configuration parameters can be set
 
 * in _application.yml_
@@ -381,4 +380,3 @@ The following guides illustrate how to use some features concretely:
 * [Building REST services with Spring](https://spring.io/guides/tutorials/rest/)
 * [Securing a Web Application](https://spring.io/guides/gs/securing-web/)
 * [Mockito Kotlin](https://github.com/mockito/mockito-kotlin/wiki/Mocking-and-verifying)
-
