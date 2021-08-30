@@ -34,6 +34,10 @@ root directory:
 
 This will start the application under the base URL `http://localhost:8080/fhir`.
 
+**NOTE:** Start-up will take a few minutes as various FHIR artifacts must be installed and loaded into the database. If the server also loads one or more large terminologies like SNOMED CT or LOINC (see below for details), the start-up and load process will take significantly longer. Running the server with H2 will require several GB of free memory.
+
+### Running tests
+
 The tests can be run using the following command (in the root directory)
 
 ```shell
@@ -100,16 +104,18 @@ whether validations errors where found or not - the status will be 200 unless an
 ## Perform full validation test
 
 Run a full app conformance test by submitting test data set along with information about the app, the app publishing
-organization, and (if used in app) related Questionnaire resources. _Note that the test data must consist of resources
-for which GECCO profiles exists (e.g. Observation or Condition resources) - data collected in the form of
-QuestionnaireResponse resources must be mapped to such resources first_. Two examples of valid input Bundles are
+organization, and (if used in app) related Questionnaire resources. Two examples of valid input Bundles are
 provided in the folder _docs/fhir-artifacts/input-examples_. The input must be in the body of a POST HTTP request. If
 the check is successful, a PDF document summarizing the successful test is returned. If the check fails, the output is
 a [OperationOutcome FHIR resource](https://www.hl7.org/fhir/r4/operationoutcome.html) listing any validation errors or
 warnings. For details about the input format and the checks performed, see the full documentation of the conformance
 test format below.
 
-The conformance server supports FHIR resources in both XML and JSON. As MIME-types, one can use either the FHIR-specific
+**NOTE:** The test data must consist of resources
+for which GECCO profiles exists (e.g. Observation or Condition resources) - data collected in the form of
+QuestionnaireResponse resources must be mapped to such resources first
+
+The conformance server supports FHIR resources in both XML and JSON. As MIME-types, you can use either the FHIR-specific
 ones (e.g. `application/fhir+json`) or the plain ones (e.g. `application/json`).
 
 The formal definitions of the non-standard FHIR operation provided by the endpoints in terms
@@ -254,7 +260,9 @@ External terminology servers do not necessarily have these restrictions.
 
 ## Loading SNOMED CT or LOINC from local files upon start-up
 
-The conformance checker can be configured to load the SNOMED CT or LOINC terminologies from files using the configuration for the validator-server module (see below for details). The terminology files should be the standard zip-file format that can be downloaded from the respective websites (may require a license). Note that loading and indexing LOINC or SNOMED CT takes a significant amount of time and will, for an in-memory DB, consume several GB of memory.
+The conformance checker can be configured to load the SNOMED CT or LOINC terminologies from files using the configuration for the validator-server module (see below for details). The terminology files should be the standard zip-file format that can be downloaded from the respective websites (may require a license). 
+
+**NOTE:** Loading and indexing LOINC or SNOMED CT takes a significant amount of time and will, for an in-memory DB, consume several GB of memory.
 
 The following files must be present in the LOINC and SNOMED CT zip-files, respectively:
 
@@ -292,7 +300,7 @@ The following files must be present in the LOINC and SNOMED CT zip-files, respec
 
 ## Using external terminology servers
 
-One can configure one or more external terminology servers using the configuration for the validator-server module (see below for details). This is done by providing the base URLs on which the servers can be reached.
+You can configure one or more external terminology servers using the configuration for the validator-server module (see below for details). This is done by providing the base URLs on which the servers can be reached.
 
 # Web interface
 
