@@ -7,10 +7,15 @@ import ca.uhn.fhir.context.support.ValueSetExpansionOptions
 import ca.uhn.fhir.jpa.api.config.DaoConfig
 import ca.uhn.fhir.jpa.term.IValueSetConceptAccumulator
 import ca.uhn.fhir.jpa.term.TermReadSvcR4
+import mu.KotlinLogging
 import org.hl7.fhir.instance.model.api.IBaseResource
 import org.hl7.fhir.r4.model.ValueSet
 import science.numcompass.conformance.fhir.chain.ValidationChain.IValidator
 
+private val logger = KotlinLogging.logger { }
+
+/* We classify any integer followed by ":", "|", or "+" (possibly with spaces)
+as a SNOMED expression */
 private val isASnomedExpression = Regex("^\\d+\\s*[\\:\\|\\+]")
 
 /**
@@ -19,17 +24,15 @@ private val isASnomedExpression = Regex("^\\d+\\s*[\\:\\|\\+]")
  * avoid spurious errors.
  *
  * Note that this function is not meant to evaluate whether a given code string is actually
- * a *valid* SNOMED code 9or valid FHIR code in general). It will only check whether it appears
- * to be a valid SNOMED expression code that would incorrectly fail validation. Hence, the check
- * will actually let through e.g. valid SNOMED expressions with leading spaces. The reason is that
- * such codes can *correctly* be flagged as invalid by the validator because FHIR codes can never
+ * a *valid* SNOMED code/expression (or valid FHIR code in general). It will only check whether it
+ * appears to be a valid SNOMED code/expression that would incorrectly fail validation. Hence, the check
+ * will actually let through e.g. valid SNOMED codes/expressions with leading spaces. The reason is that
+ * these can *correctly* be flagged as invalid by the validator because FHIR codes can never
  * have a leading space.
  */
 internal fun isSnomedCodeThatShouldNotBeValidated(theCodeSystem: String?, theCode: String?): Boolean {
     // Check if this is declared as a SNOMED code
     if (theCode == null || theCodeSystem?.startsWith("http://snomed.info/sct") != true) return false
-    /* We classify any integer followed by ":", "|", or "+" (possibly with spaces)
-    as a SNOMED expression */
     return isASnomedExpression.containsMatchIn(theCode)
 }
 
@@ -39,12 +42,10 @@ internal fun isSnomedCodeThatShouldNotBeValidated(theCodeSystem: String?, theCod
 open class TerminologyService(daoConfig: DaoConfig) : IValidator, TermReadSvcR4() {
 
     /**
-     * Default options to prevent errors caused by missing code systems
-     * and expanding value sets with more than 1000 codes.
+     * Allow expanding value sets with more than 1000 codes.
      */
     private val defaultExpansionOptions = ValueSetExpansionOptions().apply {
         count = daoConfig.maximumExpansionSize
-        isFailOnMissingCodeSystem = false
     }
 
     override fun expandValueSet(
@@ -61,6 +62,15 @@ open class TerminologyService(daoConfig: DaoConfig) : IValidator, TermReadSvcR4(
         accumulator: IValueSetConceptAccumulator?
     ) {
         super.expandValueSet(options ?: defaultExpansionOptions, valueSet, accumulator)
+    }
+
+    /**
+     * In conjunction with setting hapi.fhir.defer_indexing_for_codesystems_of_size to 0 in the
+     * application.yml, this no-op override prevents the HAPI validator from generating spurious
+     * errors due to empty value set expansions (by preventing value set expansion).
+     */
+    override fun preExpandDeferredValueSetsToTerminologyTables() {
+        logger.info { "Skipping scheduled value set expansion - note that this implies that certain code validation will not be carried out" }
     }
 
     /**
