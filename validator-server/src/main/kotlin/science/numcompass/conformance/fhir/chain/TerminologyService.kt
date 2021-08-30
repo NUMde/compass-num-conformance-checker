@@ -14,6 +14,8 @@ import science.numcompass.conformance.fhir.chain.ValidationChain.IValidator
 
 private val logger = KotlinLogging.logger { }
 
+/* We classify any integer followed by ":", "|", or "+" (possibly with spaces)
+as a SNOMED expression */
 private val isASnomedExpression = Regex("^\\d+\\s*[\\:\\|\\+]")
 
 /**
@@ -22,17 +24,15 @@ private val isASnomedExpression = Regex("^\\d+\\s*[\\:\\|\\+]")
  * avoid spurious errors.
  *
  * Note that this function is not meant to evaluate whether a given code string is actually
- * a *valid* SNOMED code 9or valid FHIR code in general). It will only check whether it appears
- * to be a valid SNOMED expression code that would incorrectly fail validation. Hence, the check
- * will actually let through e.g. valid SNOMED expressions with leading spaces. The reason is that
- * such codes can *correctly* be flagged as invalid by the validator because FHIR codes can never
+ * a *valid* SNOMED code/expression (or valid FHIR code in general). It will only check whether it
+ * appears to be a valid SNOMED code/expression that would incorrectly fail validation. Hence, the check
+ * will actually let through e.g. valid SNOMED codes/expressions with leading spaces. The reason is that
+ * these can *correctly* be flagged as invalid by the validator because FHIR codes can never
  * have a leading space.
  */
 internal fun isSnomedCodeThatShouldNotBeValidated(theCodeSystem: String?, theCode: String?): Boolean {
     // Check if this is declared as a SNOMED code
     if (theCode == null || theCodeSystem?.startsWith("http://snomed.info/sct") != true) return false
-    /* We classify any integer followed by ":", "|", or "+" (possibly with spaces)
-    as a SNOMED expression */
     return isASnomedExpression.containsMatchIn(theCode)
 }
 

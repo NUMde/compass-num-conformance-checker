@@ -447,7 +447,7 @@ class CompassConformanceIT {
         val id = conformanceService.checkConformanceAsync(bundle, UUID.randomUUID().toString())
 
         assertThat(id).isNotNull()
-        conformanceService.getResult(id!!).also {
+        conformanceService.getResult(id).also {
             assertThat(it).isNotNull()
             assertThat(it is ByteArray).isTrue()
         }
