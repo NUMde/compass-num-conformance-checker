@@ -64,6 +64,11 @@ open class TerminologyService(daoConfig: DaoConfig) : IValidator, TermReadSvcR4(
         super.expandValueSet(options ?: defaultExpansionOptions, valueSet, accumulator)
     }
 
+    /**
+     * In conjunction with setting hapi.fhir.defer_indexing_for_codesystems_of_size to 0 in the
+     * application.yml, this no-op override prevents the HAPI validator from generating spurious
+     * errors due to empty value set expansions (by preventing value set expansion).
+     */
     override fun preExpandDeferredValueSetsToTerminologyTables() {
         logger.info { "Skipping scheduled value set expansion - note that this implies that certain code validation will not be carried out" }
     }
