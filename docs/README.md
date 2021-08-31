@@ -305,7 +305,7 @@ You can configure one or more external terminology servers using the configurati
 # Web interface
 
 The `compass-conformance-server` comes with a one-page web interface to validate resources. The issues of the [operation
-outcome](https://www.hl7.org/fhir/operationoutcome.html) will be displayed will be displayed according their severities.
+outcome](https://www.hl7.org/fhir/operationoutcome.html) will be displayed according to their severities.
 Both JSON and XML are supported.
 
 ![Screenshot](images/screenshot.png)
