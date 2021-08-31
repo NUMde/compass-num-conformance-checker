@@ -25,7 +25,7 @@ As the GECCO standard is based on FHIR R4, the NUM COMPASS conformance tester on
 
 ### On your local machine
 
-To start the conformance tester with a [H2 in-memory DB](https://www.h2database.com/), run the following command in the
+To start the conformance tester with an [H2 in-memory DB](https://www.h2database.com/), run the following command in the
 root directory:
 
 ```shell
@@ -33,6 +33,16 @@ root directory:
 ```
 
 This will start the application under the base URL `http://localhost:8080/fhir`.
+
+**NOTE:** Start-up will take a few minutes as various FHIR artifacts must be installed and loaded into the database. If the server also loads one or more large terminologies like SNOMED CT or LOINC (see below for details), the start-up and load process will take significantly longer. Running the server with H2 will require several GB of free memory.
+
+### Running tests
+
+The tests can be run using the following command (in the root directory)
+
+```shell
+./gradlew clean test
+```
 
 ### Deploying the conformance tester to a server
 
@@ -67,7 +77,7 @@ This endpoint provides a PDF file listing all natively integrated code systems o
 systems from the default profile starting with `http://hl7.org/fhir/` and `http://terminology.hl7.org/CodeSystem/` are
 excluded.
 
-**NOTE:** code systems supported by remote terminology servers are not included.
+**NOTE:** Code systems supported by remote terminology servers are not included.
 
 ## Single resource validation
 
@@ -81,28 +91,31 @@ POST [base URL]/$validate-single
 
 ### Input format
 
-The resource to be validated must be included in the message body. To validate a resource against a specific profile (
-known to the server, i.e. typically a GECCO profile), declare it in the `meta.profile` element of the resource itself.
+The resource to be validated must be included in the message body. To validate a resource against a specific profile (known to the server, i.e. typically a GECCO profile), declare it in the `meta.profile` element of the resource itself.
 
 ### Output format
 
 The operation returns a [OperationOutcome FHIR resource](https://www.hl7.org/fhir/r4/operationoutcome.html) giving
-result of the validation process, including any errors found. Note that one cannot tell from the HTTP response status
+result of the validation process, including any errors found. 
+
+**NOTE:** You cannot tell from the HTTP response status
 whether validations errors where found or not - the status will be 200 unless an unexpected error occurred.
 
 ## Perform full validation test
 
 Run a full app conformance test by submitting test data set along with information about the app, the app publishing
-organization, and (if used in app) related Questionnaire resources. _Note that the test data must consist of resources
-for which GECCO profiles exists (e.g. Observation or Condition resources) - data collected in the form of
-QuestionnaireResponse resources must be mapped to such resources first_. Two examples of valid input Bundles are
+organization, and (if used in app) related Questionnaire resources. Two examples of valid input Bundles are
 provided in the folder _docs/fhir-artifacts/input-examples_. The input must be in the body of a POST HTTP request. If
 the check is successful, a PDF document summarizing the successful test is returned. If the check fails, the output is
 a [OperationOutcome FHIR resource](https://www.hl7.org/fhir/r4/operationoutcome.html) listing any validation errors or
 warnings. For details about the input format and the checks performed, see the full documentation of the conformance
 test format below.
 
-The conformance server supports FHIR resources in both XML and JSON. As MIME-types, one can use either the FHIR-specific
+**NOTE:** The test data must consist of resources
+for which GECCO profiles exists (e.g. Observation or Condition resources) - data collected in the form of
+QuestionnaireResponse resources must be mapped to such resources first
+
+The conformance server supports FHIR resources in both XML and JSON. As MIME-types, you can use either the FHIR-specific
 ones (e.g. `application/fhir+json`) or the plain ones (e.g. `application/json`).
 
 The formal definitions of the non-standard FHIR operation provided by the endpoints in terms
@@ -126,7 +139,7 @@ The output returned by the endpoint depends on whether the test was passed or no
 * _Conformance test failed:_ FHIR [OperationOutcome resource](https://www.hl7.org/fhir/r4/operationoutcome.html) with
   the result of the validation process, including the errors found.
 
-Note that one cannot tell from the HTTP response status whether validations errors where found or not: the status will
+**NOTE:** You cannot tell from the HTTP response status whether validations errors were found or not: the status will
 be 200 unless an unexpected error occurred.
 
 ## List all loaded conformance resources
@@ -226,67 +239,32 @@ The output returned by the endpoint depends on whether the test was passed or no
 * _Conformance test failed:_ FHIR [OperationOutcome resource](https://www.hl7.org/fhir/r4/operationoutcome.html) giving
   result of the validation process, including the errors found.
 
-# Known validation issues
+# Terminology validation
 
-Currently, the HAPI FHIR framework does not correctly process some of the Condition profiles defined by GECCO, e.g.
-profiles for various types of chronic diseases. As a result, instances declaring these profile cause errors in the
-conformance test server. The issue has been reported to the maintainers of HAPI FHIR and is currently
-being [investigated](https://chat.fhir.org/#narrow/stream/179167-hapi/topic/SnapshotGeneratingValidationSupport.20gives.20NPE).
+With the default configuration, the conformance checker will only validate codes from a few standard code systems, as well as code systems completely defined in the FHIR specification or loaded implementation guides (i.e. by default GECCO and its dependencies). Codes from other systems are not checked.
 
-# Web interface
+To allow validation against more code systems, you can either load further terminologies into the database from local files on start-up, or connect an external terminology server (see below for how to configure these options). Loading terminologies directly into the conformance checker allows extending the set of terminologies used for validation without running further services. An external terminology server requires separate deployment and maintenance, but typically provides more flexible and powerful validation. These methods can also be combined.
 
-The `compass-conformance-server` comes with a one-page web interface to validate resources. The issues of the [operation
-outcome](https://www.hl7.org/fhir/operationoutcome.html) will be displayed will be displayed according their severities.
-Both JSON and XML are supported.
+When adding validation against further terminologies, by any method, be sure to respect the individual code system's license terms.
 
-![Screenshot](images/screenshot.png)
+## Limitations to terminology validation using the local database
 
-# Individual server modules and their configuration
+Validation against terminologies loaded into the local database currently has the following limitations:
 
-The conformance test server is build using the Spring/Spring Boot framework and is divided into several modules with
-distinct functionality. The listed configuration parameters can be set
+1. Only simple SNOMED CT codes are validated, i.e. those consisting of just a single SNOMED concept ID. Codes that are [SNOMED expression](https://confluence.ihtsdotools.org/display/DOCGLOSS/SNOMED+CT+expression) will be skipped. That includes
+    * [Post-coordinated SNOMED CT codes](https://confluence.ihtsdotools.org/display/DOCGLOSS/postcoordinated+expression) are not validated. These are SNOMED CT expressions involving more than one concept, e.g. `416940007:363589002=81266008`
+    * Expressions consisting of a concept ID and a term (text label) for the concept, e.g. `73211009|Diabetes mellitus|`
+2. For resource elements that have a required binding to a value set, validation using the local database will not check whether the code is in the value set. However, it does check that the code is a valid code in the given code system (if available). This limitation has been introduced to avoid spurious errors that are generated by the underlying HAPI FHIR validation libraries under certain circumstances.
 
-* in _application.yml_
-* with [JSON application properties](https://docs.spring.io/spring-boot/docs/2.5.3/reference/html/features.html#features.external-config.application-json)
-* with [external configuration files](https://docs.spring.io/spring-boot/docs/2.5.3/reference/html/features.html#features.external-config.files)
-* setting `--spring.config.location` to a location with your own application*.yml files
-* or any other means provided by Spring
+External terminology servers do not necessarily have these restrictions.
 
-## validator-server
+## Loading SNOMED CT or LOINC from local files upon start-up
 
-This is a server based on [HAPI JPA Server Base](https://github.com/hapifhir/hapi-fhir/tree/master/hapi-fhir-jpaserver-base) and provides support for code systems like LOINC, SNOMED CT, and remote terminology servers, as well as a simple REST endpoint for resource validation. Be sure to respect the individual code system’s license terms when using the conformance checker.
+The conformance checker can be configured to load the SNOMED CT or LOINC terminologies from files using the configuration for the validator-server module (see below for details). The terminology files should be the standard zip-file format that can be downloaded from the respective websites (may require a license). 
 
-**NOTE:** remote terminology servers can be used to provide access to more code systems or as an
-alternative to database backed solution.
+**NOTE:** Loading and indexing LOINC or SNOMED CT takes a significant amount of time and will, for an in-memory DB, consume several GB of memory.
 
-### Configuration
-
-```yaml
-hapi:
-  fhir:
-    cache-expiration: 60m # Java Duration object
-    implementation-guides: # configured packages will be loaded from SIMPLIFIER.NET
-      gecco: # names can be chosen freely
-        name: de.basisprofil.r4 # references SIMPLIFIER.NET
-        version: 0.9.13 # references SIMPLIFIER.NET
-        url: https://some.url # can be set if package is not present in SIMPLIFIER.NET
-    code-systems:
-      loinc: "/path/to/file.zip"
-      snomed: "/path/to/file.zip"
-    remote-terminology-servers:
-      - "https://snowstorm-fhir.snomedtools.org/fhir"
-      - "https://tx.fhir.org/r4/"
-    rest:
-      base-path: "fhir" # a base path for the REST resource
-```
-
-### Code system files
-
-LOINC and SNOMED CT can be provided as zip files and will be loaded on application startup.
-
-**IMPORTANT:** SNOMED CT is already known as a code system without providing a zip file, although its definition comes
-without the actual codes. Please only reference the SNOMED CT codes after installing the code system or expect 
-`Unknown code` errors during validation.
+The following files must be present in the LOINC and SNOMED CT zip-files, respectively:
 
 * required LOINC files
   ```
@@ -319,6 +297,54 @@ without the actual codes. Please only reference the SNOMED CT codes after instal
   Terminology/sct2_Description_Full-en*.txt
   Terminology/sct2_Relationship_Full*.txt
   ```
+
+## Using external terminology servers
+
+You can configure one or more external terminology servers using the configuration for the validator-server module (see below for details). This is done by providing the base URLs on which the servers can be reached.
+
+# Web interface
+
+The `compass-conformance-server` comes with a one-page web interface to validate resources. The issues of the [operation
+outcome](https://www.hl7.org/fhir/operationoutcome.html) will be displayed according to their severities.
+Both JSON and XML are supported.
+
+![Screenshot](images/screenshot.png)
+
+# Individual server modules and their configuration
+
+The conformance test server is built using the Spring/Spring Boot framework and is divided into several modules with
+distinct functionality. The listed configuration parameters can be set
+
+* in _application.yml_
+* with [JSON application properties](https://docs.spring.io/spring-boot/docs/2.5.3/reference/html/features.html#features.external-config.application-json)
+* with [external configuration files](https://docs.spring.io/spring-boot/docs/2.5.3/reference/html/features.html#features.external-config.files)
+* setting `--spring.config.location` to a location with your own application*.yml files
+* or any other means provided by Spring
+
+## validator-server
+
+This is a server based on [HAPI JPA Server Base](https://github.com/hapifhir/hapi-fhir/tree/master/hapi-fhir-jpaserver-base) and provides support for code systems like LOINC, SNOMED CT, and remote terminology servers, as well as a simple REST endpoint for resource validation. Be sure to respect the individual code systems license terms when using the conformance checker.
+
+### Configuration
+
+```yaml
+hapi:
+  fhir:
+    cache-expiration: 60m # Java Duration object
+    implementation-guides: # configured packages will be loaded from SIMPLIFIER.NET - note that the GECCO package is automatically loaded
+      basis: # names can be chosen freely
+        name: de.basisprofil.r4 # references SIMPLIFIER.NET
+        version: 0.9.13 # references SIMPLIFIER.NET
+        url: https://some.url # can be set if package is not present in SIMPLIFIER.NET
+    code-systems:
+      loinc: "/path/to/file.zip"
+      snomed: "/path/to/file.zip"
+    remote-terminology-servers:
+      - "https://snowstorm-fhir.snomedtools.org/fhir"
+      - "https://tx.fhir.org/r4/"
+    rest:
+      base-path: "fhir" # a base path for the REST resource
+```
 
 ## compass-conformance-server
 
@@ -362,4 +388,3 @@ The following guides illustrate how to use some features concretely:
 * [Building REST services with Spring](https://spring.io/guides/tutorials/rest/)
 * [Securing a Web Application](https://spring.io/guides/gs/securing-web/)
 * [Mockito Kotlin](https://github.com/mockito/mockito-kotlin/wiki/Mocking-and-verifying)
-
