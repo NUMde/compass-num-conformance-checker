@@ -52,10 +52,23 @@ function validateResource(event) {
                     } 
                     if(ct.indexOf('pdf') > -1){
                         lockUI(false);
-                        var link=document.createElement('a');
-                        link.href=window.URL.createObjectURL(blob);
-                        link.download="certificate.pdf";
-                        link.click();
+                        filename="certificate.pdf";
+                        if(typeof window.navigator.msSaveBlob !== "undefined"){
+                            window.navigator.msSaveBlob(blob, filename);
+                        } else{
+                            var URL = window.URL || window.webkitURL;
+                            var downloadUrl = URL.createObjectURL(blob);
+
+                            var a = document.createElement("a");
+                            if(typeof a.download ==="undefined"){
+                                window.location = downloadUrl;
+                            } else {
+                                a.href = downloadUrl;
+                                a.download = filename;
+                                document.body.appendChild(a);
+                                a.click();
+                            }
+                        }
 
                     }
             },
