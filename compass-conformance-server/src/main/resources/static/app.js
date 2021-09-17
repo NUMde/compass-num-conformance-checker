@@ -45,19 +45,22 @@ function validateResource(event) {
                 "Content-Type": contentType
             },
             data: data,
-            success: function(blob,status,xhr){
+            success: function(response,status,xhr){
                 var ct = xhr.getResponseHeader("content-type") || "";
                     if (ct.indexOf('json') > -1) {
-                        showValidationMessages(blob);
+                        showValidationMessages(response);
                     } 
                     if(ct.indexOf('pdf') > -1){
                         lockUI(false);
-                        filename="certificate.pdf";
+                        var type = xhr.getResponseHeader("Content-Type");
+                        var blob = new Blob([response], {type:type});
+                        var filename="certificate.pdf";
+                        
                         if(typeof window.navigator.msSaveBlob !== "undefined"){
                             window.navigator.msSaveBlob(blob, filename);
                         } else{
-                            var URL = window.URL || window.webkitURL;
-                            var downloadUrl = URL.createObjectURL(blob);
+                            var currentURL = window.URL || window.webkitURL;
+                            var downloadUrl = currentURL.createObjectURL(blob);
 
                             var a = document.createElement("a");
                             if(typeof a.download ==="undefined"){
