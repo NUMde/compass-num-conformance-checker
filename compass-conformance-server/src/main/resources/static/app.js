@@ -9,7 +9,7 @@ $(document).ready(function () {
 
 function validateResource(event) {
     event.preventDefault();
-    // clear 
+    // clear
     $("#messages").empty();
     var val = $("button[type=submit][clicked=true]").val();
     if(val==="validate"){
@@ -37,46 +37,33 @@ function validateResource(event) {
         let url = "/fhir/$check-gecco-conformance";
         let data = $("#resource-form textarea").val();
         let contentType = data.startsWith("<") ? "application/xml" : "application/json"
-        return $.ajax({
-            type: "POST",
-            url: url,
+        fetch(url, {
+            method: "POST",
             headers: {
                 Accept: "application/json, application/pdf, text/plain; charset=utf-8",
                 "Content-Type": contentType
             },
-            data: data,
-            success: function(response,status,xhr){
-                var ct = xhr.getResponseHeader("content-type") || "";
-                    if (ct.indexOf('json') > -1) {
-                        showValidationMessages(response);
-                    } 
-                    if(ct.indexOf('pdf') > -1){
-                        lockUI(false);
-                        var type = xhr.getResponseHeader("Content-Type");
-                        var blob = new Blob([response], {type:type});
-                        var filename="certificate.pdf";
-                        
-                        if(typeof window.navigator.msSaveBlob !== "undefined"){
-                            window.navigator.msSaveBlob(blob, filename);
-                        } else{
-                            var currentURL = window.URL || window.webkitURL;
-                            var downloadUrl = currentURL.createObjectURL(blob);
+            body: data
+        }).then(
+            res => res.headers.get("Content-Type").includes("pdf") ? res.blob() : res.json()
+        ).then( res => {
+                if(res instanceof Blob) {
+                    lockUI(false);
+                    var a = document.createElement("a");
+                    a.href = URL.createObjectURL(res);
+                    a.download = "certificate.pdf";
+                    document.body.appendChild(a);
+                    a.click();
+                } else {
+                    showValidationMessages(res);
+                }
+            }
+        ).catch(err => {
+            lockUI(false)
+            addMessage("danger", `${err}`)
+        })
 
-                            var a = document.createElement("a");
-                            if(typeof a.download ==="undefined"){
-                                window.location = downloadUrl;
-                            } else {
-                                a.href = downloadUrl;
-                                a.download = filename;
-                                document.body.appendChild(a);
-                                a.click();
-                            }
-                        }
 
-                    }
-            },
-            error: handleError
-        });
     }
 
 }
@@ -113,7 +100,7 @@ function lockUI(locked, action="") {
         $("#resource-form button, #resource-form textarea").prop("disabled", locked)
         if(!$("#validate-spinner").hasClass("hidden-spinner")){
             $("#validate-spinner").addClass("hidden-spinner");
-        } 
+        }
         else if (!$("#gecco-spinner").hasClass("hidden-spinner")){
             $("#gecco-spinner").addClass("hidden-spinner");
         }
@@ -121,7 +108,6 @@ function lockUI(locked, action="") {
         $("#resource-form button, #resource-form textarea").prop("disabled", locked)
         $("#" + action + "-spinner").toggleClass("hidden-spinner")
     }
-    
 }
 
 function addMessage(severity, message) {
