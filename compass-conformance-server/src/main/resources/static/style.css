@@ -37,10 +37,18 @@ pre {
     margin-bottom: 0 !important;
 }
 
-#resource-form button {
+#resource-form .btn-primary {
     background-color: var(--main-color);
     border-color: var(--main-color);
     border-radius: 24px;
+    width: 256px;
+}
+#resource-form .btn-secondary {
+    background-color: #ffffff;
+    border-color: var(--main-color);
+    border-radius: 24px;
+    border-width: 2px;
+    color: #000000;
     width: 256px;
 }
 
