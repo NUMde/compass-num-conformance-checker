@@ -16,9 +16,6 @@ hapi:
     #code-systems:
       #loinc: "/path/to/file.zip"
       #snomed: "/path/to/file.zip"
-    code-systems:
-      loinc: "/home/yannikw/MeDIC/Terminologien/Loinc_2.70.zip"
-      snomed: "/home/yannikw/MeDIC/Terminologien/SnomedCT_InternationalRF2_PRODUCTION_20200309T120000Z.zip"
 spring:
   batch:
     job:
