@@ -1,7 +1,7 @@
 
 #compass
 ##Dependency License Report
-_2021-07-26 20:06:00 MESZ_
+_2021-12-13 09:32:10 CET_
 ## Apache License, Version 2.0
 
 **1** **Group:** `ca.uhn.hapi.fhir` **Name:** `hapi-fhir-base` **Version:** `5.4.2` 
@@ -716,33 +716,33 @@ _2021-07-26 20:06:00 MESZ_
 > - **Embedded license files**: [jena-shaded-guava-3.17.0.jar/META-INF/LICENSE](jena-shaded-guava-3.17.0.jar/META-INF/LICENSE) 
     - [jena-shaded-guava-3.17.0.jar/META-INF/NOTICE](jena-shaded-guava-3.17.0.jar/META-INF/NOTICE)
 
-**131** **Group:** `org.apache.logging.log4j` **Name:** `log4j-api` **Version:** `2.14.1` 
+**131** **Group:** `org.apache.logging.log4j` **Name:** `log4j-api` **Version:** `2.15.0` 
 > - **Manifest Project URL**: [https://www.apache.org/](https://www.apache.org/)
 > - **Manifest License**: Apache License, Version 2.0 (Not Packaged)
 > - **POM License**: Apache License, Version 2.0 - [https://www.apache.org/licenses/LICENSE-2.0](https://www.apache.org/licenses/LICENSE-2.0)
-> - **Embedded license files**: [log4j-api-2.14.1.jar/META-INF/LICENSE](log4j-api-2.14.1.jar/META-INF/LICENSE) 
-    - [log4j-api-2.14.1.jar/META-INF/NOTICE](log4j-api-2.14.1.jar/META-INF/NOTICE)
+> - **Embedded license files**: [log4j-api-2.15.0.jar/META-INF/LICENSE](log4j-api-2.15.0.jar/META-INF/LICENSE) 
+    - [log4j-api-2.15.0.jar/META-INF/NOTICE](log4j-api-2.15.0.jar/META-INF/NOTICE)
 
-**132** **Group:** `org.apache.logging.log4j` **Name:** `log4j-api` **Version:** `2.14.1` 
+**132** **Group:** `org.apache.logging.log4j` **Name:** `log4j-api` **Version:** `2.15.0` 
 > - **Manifest Project URL**: [https://www.apache.org/](https://www.apache.org/)
 > - **Manifest License**: Apache License, Version 2.0 (Not Packaged)
 > - **POM License**: Apache License, Version 2.0 - [https://www.apache.org/licenses/LICENSE-2.0](https://www.apache.org/licenses/LICENSE-2.0)
-> - **Embedded license files**: [log4j-api-2.14.1.jar/META-INF/LICENSE](log4j-api-2.14.1.jar/META-INF/LICENSE) 
-    - [log4j-api-2.14.1.jar/META-INF/NOTICE](log4j-api-2.14.1.jar/META-INF/NOTICE)
+> - **Embedded license files**: [log4j-api-2.15.0.jar/META-INF/LICENSE](log4j-api-2.15.0.jar/META-INF/LICENSE) 
+    - [log4j-api-2.15.0.jar/META-INF/NOTICE](log4j-api-2.15.0.jar/META-INF/NOTICE)
 
-**133** **Group:** `org.apache.logging.log4j` **Name:** `log4j-to-slf4j` **Version:** `2.14.1` 
+**133** **Group:** `org.apache.logging.log4j` **Name:** `log4j-to-slf4j` **Version:** `2.15.0` 
 > - **Manifest Project URL**: [https://www.apache.org/](https://www.apache.org/)
 > - **Manifest License**: Apache License, Version 2.0 (Not Packaged)
 > - **POM License**: Apache License, Version 2.0 - [https://www.apache.org/licenses/LICENSE-2.0](https://www.apache.org/licenses/LICENSE-2.0)
-> - **Embedded license files**: [log4j-to-slf4j-2.14.1.jar/META-INF/LICENSE](log4j-to-slf4j-2.14.1.jar/META-INF/LICENSE) 
-    - [log4j-to-slf4j-2.14.1.jar/META-INF/NOTICE](log4j-to-slf4j-2.14.1.jar/META-INF/NOTICE)
+> - **Embedded license files**: [log4j-to-slf4j-2.15.0.jar/META-INF/LICENSE](log4j-to-slf4j-2.15.0.jar/META-INF/LICENSE) 
+    - [log4j-to-slf4j-2.15.0.jar/META-INF/NOTICE](log4j-to-slf4j-2.15.0.jar/META-INF/NOTICE)
 
-**134** **Group:** `org.apache.logging.log4j` **Name:** `log4j-to-slf4j` **Version:** `2.14.1` 
+**134** **Group:** `org.apache.logging.log4j` **Name:** `log4j-to-slf4j` **Version:** `2.15.0` 
 > - **Manifest Project URL**: [https://www.apache.org/](https://www.apache.org/)
 > - **Manifest License**: Apache License, Version 2.0 (Not Packaged)
 > - **POM License**: Apache License, Version 2.0 - [https://www.apache.org/licenses/LICENSE-2.0](https://www.apache.org/licenses/LICENSE-2.0)
-> - **Embedded license files**: [log4j-to-slf4j-2.14.1.jar/META-INF/LICENSE](log4j-to-slf4j-2.14.1.jar/META-INF/LICENSE) 
-    - [log4j-to-slf4j-2.14.1.jar/META-INF/NOTICE](log4j-to-slf4j-2.14.1.jar/META-INF/NOTICE)
+> - **Embedded license files**: [log4j-to-slf4j-2.15.0.jar/META-INF/LICENSE](log4j-to-slf4j-2.15.0.jar/META-INF/LICENSE) 
+    - [log4j-to-slf4j-2.15.0.jar/META-INF/NOTICE](log4j-to-slf4j-2.15.0.jar/META-INF/NOTICE)
 
 **135** **Group:** `org.apache.lucene` **Name:** `lucene-analyzers-common` **Version:** `8.7.0` 
 > - **POM License**: Apache License, Version 2.0 - [https://www.apache.org/licenses/LICENSE-2.0](https://www.apache.org/licenses/LICENSE-2.0)
