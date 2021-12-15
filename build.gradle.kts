@@ -49,7 +49,7 @@ subprojects {
 configurations.all {
     resolutionStrategy.eachDependency {
         if (requested.group == "org.apache.logging.log4j") {
-            useVersion("[2.15.0,)")
+            useVersion("[2.16.0,)")
             because("earlier versions of log4j are affected by log4shell vulnerability (https://nvd.nist.gov/vuln/detail/CVE-2021-44228)")
         }
     }
