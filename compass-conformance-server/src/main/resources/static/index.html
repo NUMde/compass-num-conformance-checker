@@ -27,11 +27,19 @@
             </div>
         </div>
         <div class="row">
-            <div id="button-cell" class="mb-3">
-                <button type="submit" class="btn btn-primary">
-                    <span class="hidden-spinner spinner-border spinner-border-sm text-light"></span>
-                    Validate
-                </button>
+            <div class="btn-toolbar mb-3">
+                    <div class="btn-group">
+                        <button id="validate-btn" type="submit" class="btn btn-primary me-3" value="validate">
+                            <span id="validate-spinner" class="hidden-spinner spinner-border spinner-border-sm text-light"></span>
+                            Validate
+                        </button>
+                    </div>
+                    <div class="btn-group">
+                        <button id="gecco-btn" type="submit" class="btn btn-secondary me-3" value="gecco">
+                            <span id ="gecco-spinner" class="hidden-spinner spinner-border spinner-border-sm text-dark"></span>
+                            Issue GECCO certificate
+                        </button>
+                    </div>
             </div>
         </div>
     </form>
